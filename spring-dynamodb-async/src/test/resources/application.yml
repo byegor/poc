@@ -1,0 +1,10 @@
+aws:
+  accessKey: any
+  secretKey: any
+
+
+dynamodb:
+  endpoint: http://localhost:8000/
+
+logging:
+  pattern.console: "%d{dd.MM.yy HH:mm:ss} %-5level [%mdc]  %logger{36} - %msg%n"
