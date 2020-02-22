@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(TestConfig.class)
-public class SimpleControllerTest {
+public class AnnotatedControllerTest {
 
     @ClassRule
     public static LocalDynamoDbRule dynamoDbRule = new LocalDynamoDbRule();
@@ -32,7 +32,7 @@ public class SimpleControllerTest {
                 .exchange()
                 // and use the dedicated DSL to test assertions against the response
                 .expectStatus().isOk()
-                .expectBody(String.class).isEqualTo("null");
+                .expectBody(String.class).isEqualTo(null);
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.example.dynamo_spring;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -16,19 +17,18 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class DynamoDbService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DynamoDbService.class);
-
     public static final String TABLE_NAME = "events";
     public static final String ID_COLUMN = "id";
     public static final String BODY_COLUMN = "body";
 
     final DynamoDbAsyncClient client;
 
-
+    @Autowired
     public DynamoDbService(DynamoDbAsyncClient client) {
         this.client = client;
     }
 
+    //Creating table on startup if not exists
     @PostConstruct
     public void createTableIfNeeded() throws ExecutionException, InterruptedException {
         ListTablesRequest request = ListTablesRequest.builder().exclusiveStartTableName(TABLE_NAME).build();
@@ -44,8 +44,8 @@ public class DynamoDbService {
                     }
                 });
 
-        CreateTableResponse createTableResponse = createTableRequest.get();
-        System.out.println(createTableRequest);
+        //Wait in synchronous manner for table creation
+        createTableRequest.get();
     }
 
     public CompletableFuture<PutItemResponse> saveEvent(Event event) {
@@ -61,7 +61,7 @@ public class DynamoDbService {
         return client.putItem(putItemRequest);
     }
 
-    public CompletableFuture<Optional<Event>> getEvent(String id) {
+    public CompletableFuture<Event> getEvent(String id) {
         Map<String, AttributeValue> key = new HashMap<>();
         key.put(ID_COLUMN, AttributeValue.builder().s(id).build());
 
@@ -73,11 +73,11 @@ public class DynamoDbService {
 
         return client.getItem(getRequest).thenApply(item -> {
             if (!item.hasItem()) {
-                return Optional.empty();
+                return null;
             } else {
                 Map<String, AttributeValue> itemAttr = item.item();
                 String body = itemAttr.get(BODY_COLUMN).s();
-                return Optional.of(new Event(id, body));
+                return new Event(id, body);
             }
         });
     }

@@ -9,17 +9,17 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/event")
-public class SimpleController {
+public class AnnotatedController {
 
     final DynamoDbService dynamoDbService;
 
-    public SimpleController(DynamoDbService dynamoDbService) {
+    public AnnotatedController(DynamoDbService dynamoDbService) {
         this.dynamoDbService = dynamoDbService;
     }
 
     @GetMapping(value = "/{eventId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Optional<Event>> getEvent(@PathVariable String eventId) {
-        CompletableFuture<Optional<Event>> eventFuture = dynamoDbService.getEvent(eventId);
+    public Mono<Event> getEvent(@PathVariable String eventId) {
+        CompletableFuture<Event> eventFuture = dynamoDbService.getEvent(eventId);
         return Mono.fromCompletionStage(eventFuture);
     }
 
