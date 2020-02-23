@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(TestConfig.class)
-public class AnnotatedControllerTest {
+public class IntegrationTest {
 
     @ClassRule
     public static LocalDynamoDbRule dynamoDbRule = new LocalDynamoDbRule();
