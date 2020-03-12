@@ -1,0 +1,3 @@
+aws:
+  secretkey: secret
+  accesskey: key

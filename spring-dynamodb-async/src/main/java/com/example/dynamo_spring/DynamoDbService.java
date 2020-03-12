@@ -31,12 +31,18 @@ public class DynamoDbService {
     //Creating table on startup if not exists
     @PostConstruct
     public void createTableIfNeeded() throws ExecutionException, InterruptedException {
-        ListTablesRequest request = ListTablesRequest.builder().exclusiveStartTableName(TABLE_NAME).build();
+        ListTablesRequest request = ListTablesRequest
+                .builder()
+                .exclusiveStartTableName(TABLE_NAME)
+                .build();
         CompletableFuture<ListTablesResponse> listTableResponse = client.listTables(request);
 
         CompletableFuture<CreateTableResponse> createTableRequest = listTableResponse
                 .thenCompose(response -> {
-                    boolean tableExist = response.tableNames().contains(TABLE_NAME);
+                    boolean tableExist = response
+                            .tableNames()
+                            .contains(TABLE_NAME);
+
                     if (!tableExist) {
                         return createTable();
                     } else {
@@ -83,12 +89,22 @@ public class DynamoDbService {
     }
 
     private CompletableFuture<CreateTableResponse> createTable() {
+        KeySchemaElement keySchemaElement = KeySchemaElement
+                .builder()
+                .attributeName(ID_COLUMN)
+                .keyType(KeyType.HASH)
+                .build();
+
+        AttributeDefinition attributeDefinition = AttributeDefinition
+                .builder()
+                .attributeName(ID_COLUMN)
+                .attributeType(ScalarAttributeType.S)
+                .build();
 
         CreateTableRequest request = CreateTableRequest.builder()
                 .tableName(TABLE_NAME)
-
-                .keySchema(KeySchemaElement.builder().attributeName(ID_COLUMN).keyType(KeyType.HASH).build())
-                .attributeDefinitions(AttributeDefinition.builder().attributeName(ID_COLUMN).attributeType(ScalarAttributeType.S).build())
+                .keySchema(keySchemaElement)
+                .attributeDefinitions(attributeDefinition)
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .build();
 
