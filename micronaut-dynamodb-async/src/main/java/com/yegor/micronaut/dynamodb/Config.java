@@ -1,32 +1,33 @@
 package com.yegor.micronaut.dynamodb;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClientBuilder;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.env.Environment;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
-import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClientBuilder;
 
-import java.net.URI;
 import java.util.Optional;
 
 @Factory
 public class Config {
 
     @Bean
-    DynamoDbAsyncClient dynamoDbAsyncClient(Environment environment) {
+    AmazonDynamoDBAsync dynamoDbAsyncClient(Environment environment) {
         Optional<String> secretKey = environment.get("aws.secretkey", String.class);
         Optional<String> accessKey = environment.get("aws.accesskey", String.class);
-        if (secretKey.isEmpty() || accessKey.isEmpty()) {
+        if (!secretKey.isPresent() || !accessKey.isPresent()) {
             throw new IllegalArgumentException("Aws credentials not provided");
         }
-        AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey.get(), secretKey.get());
-        DynamoDbAsyncClientBuilder clientBuilder = DynamoDbAsyncClient.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(credentials))
-                .region(Region.EU_WEST_1)
-                .endpointOverride(URI.create("http://localhost:8000"));
+        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey.get(), secretKey.get());
+        AmazonDynamoDBAsyncClientBuilder clientBuilder = AmazonDynamoDBAsyncClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+//                .withRegion(Regions.EU_WEST_1)
+                .withEndpointConfiguration(
+                        new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", null)
+                );
 
         return clientBuilder.build();
     }

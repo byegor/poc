@@ -1,10 +1,9 @@
 package com.yegor.micronaut.dynamodb;
 
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
-
-import java.util.concurrent.CompletableFuture;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 @Controller("/event")
 public class SimpleController {
@@ -17,15 +16,15 @@ public class SimpleController {
 
     @Get("/{eventId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public CompletableFuture<HttpResponse<Event>> getEvent(@PathVariable String eventId) {
-        CompletableFuture<Event> event = dynamoDBService.getEvent(eventId);
-        return event.thenApply(HttpResponse::ok);
+    public Maybe<Event> getEvent(@PathVariable String eventId) {
+        Maybe<Event> event = dynamoDBService.getEvent(eventId);
+        return event;
     }
 
     @Post("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public CompletableFuture<HttpResponse<String>> saveEvent(@Body String body) {
-        CompletableFuture<String> event = dynamoDBService.saveEvent(body);
-        return event.thenApply(HttpResponse::created);
+    public Single<String> saveEvent(@Body String body) {
+        Single<String> event = dynamoDBService.saveEvent(body);
+        return event;
     }
 }

@@ -31,10 +31,10 @@ public class SimpleControllerTest {
 
 
     @Test
-    public void getEventsTest() throws ExecutionException, InterruptedException {
+    public void getEventsTest() {
         //add event to database so we can query it via http
         String eventBody = "testMessage";
-        String eventId = dynamoDBService.saveEvent(eventBody).get();
+        String eventId = dynamoDBService.saveEvent(eventBody).blockingGet();
         HttpRequest request = HttpRequest.GET("/" + eventId);
         HttpResponse<List<Event>> rsp = client.toBlocking().exchange(request, Argument.listOf(Event.class));
 
@@ -45,13 +45,13 @@ public class SimpleControllerTest {
     }
 
     @Test
-    public void saveEventTest() throws ExecutionException, InterruptedException {
+    public void saveEventTest() {
         HttpRequest request = HttpRequest.POST("/", "postBody");
         HttpResponse<String> rsp = client.toBlocking().exchange(request, Argument.of(String.class));
         Optional<String> id = rsp.getBody();
         assertTrue(id.isPresent());
 
-        Event event = dynamoDBService.getEvent(id.get()).get();
+        Event event = dynamoDBService.getEvent(id.get()).blockingGet();
         assertEquals(id.get(), event.getId());
         assertEquals("postBody", event.getBody());
     }
