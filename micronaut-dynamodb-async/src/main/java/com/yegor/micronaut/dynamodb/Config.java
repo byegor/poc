@@ -18,6 +18,7 @@ public class Config {
     AmazonDynamoDBAsync dynamoDbAsyncClient(Environment environment) {
         Optional<String> secretKey = environment.get("aws.secretkey", String.class);
         Optional<String> accessKey = environment.get("aws.accesskey", String.class);
+        String endpoint = environment.get("dynamo.endpoint", String.class, "http://localhost:8000");
         if (!secretKey.isPresent() || !accessKey.isPresent()) {
             throw new IllegalArgumentException("Aws credentials not provided");
         }
@@ -26,7 +27,7 @@ public class Config {
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
 //                .withRegion(Regions.EU_WEST_1)
                 .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", null)
+                        new AwsClientBuilder.EndpointConfiguration(endpoint, null)
                 );
 
         return clientBuilder.build();
