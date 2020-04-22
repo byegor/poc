@@ -35,7 +35,7 @@ public class SimpleControllerTest {
         //add event to database so we can query it via http
         String eventBody = "testMessage";
         String eventId = dynamoDBService.saveEvent(eventBody).blockingGet();
-        HttpRequest request = HttpRequest.GET("/" + eventId);
+        HttpRequest request = HttpRequest.GET(eventId);
         HttpResponse<List<Event>> rsp = client.toBlocking().exchange(request, Argument.listOf(Event.class));
 
         assertEquals(HttpStatus.OK, rsp.getStatus());
@@ -55,6 +55,4 @@ public class SimpleControllerTest {
         assertEquals(id.get(), event.getId());
         assertEquals("postBody", event.getBody());
     }
-
-
 }

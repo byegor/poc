@@ -3,7 +3,6 @@ package com.yegor.micronaut.dynamodb;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync;
 import com.amazonaws.services.dynamodbv2.model.*;
 import io.reactivex.Maybe;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
@@ -12,7 +11,6 @@ import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Singleton
 public class DynamoDBService {
@@ -26,6 +24,7 @@ public class DynamoDBService {
     public DynamoDBService(AmazonDynamoDBAsync client) {
         this.client = client;
     }
+
 
     @PostConstruct
     public void createTableIfNotExists() {

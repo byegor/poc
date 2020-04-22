@@ -42,12 +42,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-graal</artifactId>
-        </dependency>
-
-
-        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
             <version>1.11.762</version>
@@ -136,11 +130,6 @@
                             <artifactId>micronaut-validation</artifactId>
                             <version>${micronaut.version}</version>
                         </path>
-                        <path>
-                            <groupId>io.micronaut</groupId>
-                            <artifactId>micronaut-graal</artifactId>
-                            <version>${micronaut.version}</version>
-                        </path>
                     </annotationProcessorPaths>
                 </configuration>
                 <executions>
@@ -183,7 +172,6 @@
                 </executions>
                 <configuration>
                     <mainClass>com.yegor.micronaut.dynamodb.App</mainClass>
-                    <buildArgs>--no-server</buildArgs>
                     <buildArgs>-H:Name=dynamodb-client</buildArgs>
                     <buildArgs>-H:IncludeResources="logback.xml|application.yml"</buildArgs>
                 </configuration>

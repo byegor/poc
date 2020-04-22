@@ -25,7 +25,6 @@ public class Config {
         BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey.get(), secretKey.get());
         AmazonDynamoDBAsyncClientBuilder clientBuilder = AmazonDynamoDBAsyncClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-//                .withRegion(Regions.EU_WEST_1)
                 .withEndpointConfiguration(
                         new AwsClientBuilder.EndpointConfiguration(endpoint, null)
                 );
